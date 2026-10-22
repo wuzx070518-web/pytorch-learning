@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import torch
 import torchvision
 from torchvision.transforms import v2
@@ -66,9 +68,11 @@ import torch.optim as optim
 criterion=nn.CrossEntropyLoss()
 optimizer=optim.SGD(net.parameters(),lr=0.001,momentum=0.9)
 
-PATH = './cifar_net.pt'
+PATH = Path(__file__).with_name('cifar_net.pt')
 
-if not open('./cifar_net.pt','r'):
+if PATH.exists():
+    net.load_state_dict(torch.load(PATH, weights_only=True))
+else:
     for epoch in range(2):
         running_loss=0.0
         for i,data in enumerate(trainloader,0):
@@ -92,9 +96,6 @@ if not open('./cifar_net.pt','r'):
 # # print images
 # imshow(torchvision.utils.make_grid(images))
 # print('GroundTruth: ', ' '.join(f'{classes[labels[j]]:5s}' for j in range(4)))
-
-net = Net()
-net.load_state_dict(torch.load(PATH, weights_only=True))
 
 # outputs = net(images)
 # _, predicted = torch.max(outputs, 1)
